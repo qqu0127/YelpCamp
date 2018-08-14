@@ -9,9 +9,9 @@ app.get("/", function(req, res){
 
 app.get("/campgrounds", function(req, res){
     var cmp = [
-        {name: "Salmon Creek", image: ""},
-        {name: "Granite Hill", image: ""},
-        {name: "Mountain Goat's Rest", image: ""}
+        {name: "Salmon Creek", image: "https://recreation-acm.activefederal.com/assetfactory.aspx?did=7460"},
+        {name: "Granite Hill", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQFfqSyzNCa9DdWrI4yEoCEceqxBJ7U-pa5wKH48Bv4vETx48W"},
+        {name: "Mountain Goat's Rest", image: "http://www.westernlehigh.org/wp-content/uploads/2016/02/campingoutside.png"}
         ];
-    res.render("campgrounds");
+    res.render("campgrounds", {campgrounds: cmp});
 })
