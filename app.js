@@ -1,5 +1,7 @@
 var app = require("express")();
 var bodyParser = require("body-parser");
+var mongoose = require("mongoose");
+mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});
 
 //placeholder fake data 
 var cmp = [
@@ -22,6 +24,30 @@ var cmp = [
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
+
+//schema setup
+var campgroundSchema = new mongoose.Schema({
+    name: String,
+    image: String,
+    description: String
+});
+var Campground = mongoose.model("Campground", campgroundSchema);
+
+Campground.create(
+    {
+        name: "Granite Hill", 
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQFfqSyzNCa9DdWrI4yEoCEceqxBJ7U-pa5wKH48Bv4vETx48W",
+        description: "This campground is nice."
+        
+    }, 
+    function(err, camp){
+        if(err)
+            console.log("error");
+        else{
+            console.log("Newly added campground");
+            console.log(camp);
+        }
+    });
 app.listen(process.env.PORT, process.env.IP, function(){
     console.log("YelpCamp server is on.");
 });
@@ -30,20 +56,42 @@ app.get("/", function(req, res){
 });
 
 app.get("/campgrounds", function(req, res){
+    //access database and show all campgrounds
+    Campground.find({}, function(err, allCamp){
+        if(err)
+            console.log(err);
+        else
+            res.render("campgrounds", {campgrounds: allCamp});
+    });
     
-    res.render("campgrounds", {campgrounds: cmp});
+    //res.render("campgrounds", {campgrounds: cmp});
 });
 
 app.get("/campgrounds/new", function(req, res){
     res.render("new.ejs");
     
-})
-
+});
+app.get("/campgrounds/:id", function(req, res){
+    //TODO
+    //find the campground with given ID and render the show page.
+    res.send("This will be the show page shortly.");
+    
+});
 app.post("/campgrounds", function(req, res){
-    //get data from form and add to campgrounds array data
+    //create a new camp and save to MongoDB
     var name = req.body.name;
     var url = req.body.image;
-    var item = {name: name, image: url};
-    cmp.push(item);
-    res.redirect("/campgrounds");
+    //var item = {name: name, image: url};
+    Campground.create({name: name, image: url}, function(err, camp){
+        if(err){
+            console.log(err);
+            
+        }
+        else{
+            res.redirect("/campgrounds");
+        }
+        
+    });
+    //cmp.push(item);
+    
 });
