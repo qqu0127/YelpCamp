@@ -32,7 +32,7 @@ var campgroundSchema = new mongoose.Schema({
     description: String
 });
 var Campground = mongoose.model("Campground", campgroundSchema);
-
+/*
 Campground.create(
     {
         name: "Granite Hill", 
@@ -48,6 +48,7 @@ Campground.create(
             console.log(camp);
         }
     });
+    */
 app.listen(process.env.PORT, process.env.IP, function(){
     console.log("YelpCamp server is on.");
 });
@@ -61,7 +62,7 @@ app.get("/campgrounds", function(req, res){
         if(err)
             console.log(err);
         else
-            res.render("campgrounds", {campgrounds: allCamp});
+            res.render("index", {campgrounds: allCamp});
     });
     
     //res.render("campgrounds", {campgrounds: cmp});
@@ -71,18 +72,27 @@ app.get("/campgrounds/new", function(req, res){
     res.render("new.ejs");
     
 });
+
+//SHOW - show more info about the campground
 app.get("/campgrounds/:id", function(req, res){
     //TODO
     //find the campground with given ID and render the show page.
-    res.send("This will be the show page shortly.");
+    Campground.findById(req.params.id, function(err, found){
+        if(err)
+            console.log(err);
+        else{
+            res.render("show", {campground: found});
+        }
+    });
     
 });
 app.post("/campgrounds", function(req, res){
     //create a new camp and save to MongoDB
     var name = req.body.name;
     var url = req.body.image;
+    var desc = req.body.description;
     //var item = {name: name, image: url};
-    Campground.create({name: name, image: url}, function(err, camp){
+    Campground.create({name: name, image: url, description: desc}, function(err, camp){
         if(err){
             console.log(err);
             
