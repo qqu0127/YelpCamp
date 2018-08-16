@@ -18,18 +18,19 @@ app.get("/", function(req, res){
     res.render("landing");
 });
 
+//INDEX - show all campgrounds in a page
 app.get("/campgrounds", function(req, res){
     //access database and show all campgrounds
     Campground.find({}, function(err, allCamp){
         if(err)
             console.log(err);
         else
-            res.render("index", {campgrounds: allCamp});
+            res.render("campgrounds/index.ejs", {campgrounds: allCamp});
     });
 });
 
 app.get("/campgrounds/new", function(req, res){
-    res.render("new.ejs");
+    res.render("campgrounds/new.ejs");
     
 });
 
@@ -42,11 +43,12 @@ app.get("/campgrounds/:id", function(req, res){
             console.log(err);
         else{
             console.log(found);
-            res.render("show", {campground: found});
+            res.render("campgrounds/show", {campground: found});
         }
     });
     
 });
+//CREATE - create campground with given info, store to DB and redirect to SHOW
 app.post("/campgrounds", function(req, res){
     //create a new camp and save to MongoDB
     var name = req.body.name;
@@ -56,13 +58,42 @@ app.post("/campgrounds", function(req, res){
     Campground.create({name: name, image: url, description: desc}, function(err, camp){
         if(err){
             console.log(err);
-            
         }
         else{
             res.redirect("/campgrounds");
         }
-        
     });
-    //cmp.push(item);
-    
 });
+
+// COMMENTS ROUTES
+
+app.get("/campgrounds/:id/comments/new", function(req, res){
+    //find by camp.ID
+    Campground.findById(req.params.id, function(err, found){
+        if(err)
+            console.log(err);
+        else
+            res.render("comments/new", {campground: found}); 
+    });
+});
+
+app.post("/campgrounds/:id/comments", function(req, res){
+    Campground.findById(req.params.id, function(err, foundCamp){
+        if(err){
+            console.log(err);
+            res.redirect("/campgrounds");   
+        }
+        else{
+            Comment.create(req.body.comment, function(err, comment){
+                if(err)
+                    console.log(err);
+                else{
+                    foundCamp.comments.push(comment);
+                    foundCamp.save();
+                    res.redirect("/campgrounds/" + foundCamp._id);
+                    
+                }
+            })
+        }
+    })
+})
