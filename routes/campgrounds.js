@@ -38,8 +38,11 @@ router.post("/", isLoggedIn, function(req, res){
     var name = req.body.name;
     var url = req.body.image;
     var desc = req.body.description;
-    //var item = {name: name, image: url};
-    Campground.create({name: name, image: url, description: desc}, function(err, camp){
+    var author = {
+        id: req.user._id,
+        username: req.user.username
+    };
+    Campground.create({name: name, image: url, description: desc, author: author}, function(err, camp){
         if(err){
             console.log(err);
         }
