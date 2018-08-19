@@ -8,8 +8,7 @@ var methodOverride = require("method-override");
 
 var Campground = require("./models/campground"),
     User       = require("./models/user"),
-    Comment    = require("./models/comment"),
-    Seed       = require("./seeds");
+    Comment    = require("./models/comment");
 
 var commentsRoutes = require("./routes/comments"),
     campgroundRoutes = require("./routes/campgrounds"),
@@ -27,11 +26,6 @@ app.use(require("express-session")({
     saveUnintialized: false
 }));
 
-app.use(function(req, res, next){
-    res.locals.currentUser = req.user;
-    next();
-});
-
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
@@ -39,9 +33,16 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser()); 
 
 // requiring routes
+app.use(function(req, res, next){
+    res.locals.currentUser = req.user;
+    next();
+});
+
 app.use("/", indexRoutes);
 app.use("/campgrounds/:id/comments", commentsRoutes);
 app.use("/campgrounds", campgroundRoutes);
+
+
 
 //Seed();
 app.listen(process.env.PORT, process.env.IP, function(){
