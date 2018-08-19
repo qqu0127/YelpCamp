@@ -33,7 +33,7 @@ router.get("/:id", function(req, res){
 });
 
 //CREATE - create campground with given info, store to DB and redirect to SHOW
-router.post("/", function(req, res){
+router.post("/", isLoggedIn, function(req, res){
     //create a new camp and save to MongoDB
     var name = req.body.name;
     var url = req.body.image;
