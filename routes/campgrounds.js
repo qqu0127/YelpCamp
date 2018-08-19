@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router({mergeParams: true});
 var Campground = require("../models/campground.js");
 
-//INDEX - show all campgrounds in a page
+// INDEX - show all campgrounds in a page
 router.get("/", function(req, res){
     //access database and show all campgrounds
     Campground.find({}, function(err, allCamp){
@@ -32,7 +32,7 @@ router.get("/:id", function(req, res){
     });
 });
 
-//CREATE - create campground with given info, store to DB and redirect to SHOW
+// CREATE - create campground with given info, store to DB and redirect to SHOW
 router.post("/", isLoggedIn, function(req, res){
     //create a new camp and save to MongoDB
     var name = req.body.name;
@@ -52,6 +52,42 @@ router.post("/", isLoggedIn, function(req, res){
     });
 });
 
+// EDIT - edit campground route
+router.get("/:id/edit", function(req, res){
+    Campground.findById(req.params.id, function(err, foundCampground){
+        if(err)
+            res.redirect("/campgrounds");
+        else{
+            res.render("campgrounds/edit", {campground: foundCampground});
+        }
+    });
+});
+
+// UPDATE - update campground
+router.put("/:id", function(req, res){
+    //find and update
+    
+    Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCampground){
+        if(err)
+            res.redirect("/campgrounds");
+        else
+            res.redirect("/campgrounds/" + req.params.id);
+        
+    })
+    
+})
+
+// DESTROY - delete campground
+router.delete("/:id", function(req, res){
+    Campground.findByIdAndRemove(req.params.id, function(err){
+        if(err)
+            res.redirect("/campgrounds");
+        else{
+            res.redirect("/campgrounds");
+            
+        }
+    });
+});
 // middleware
 function isLoggedIn(req, res, next){
     if(req.isAuthenticated())
