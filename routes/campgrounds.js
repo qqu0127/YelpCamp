@@ -106,7 +106,7 @@ function checkCampgroundOwnership(req, res, next){
                 res.redirect("/campgrounds");
             else{
                 //check if user own this post
-                if(foundCampground.author.id.equals(req.user._id))
+                if(foundCampground && foundCampground.author.id.equals(req.user._id))
                     next();
                 else
                     res.redirect("back");
