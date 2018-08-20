@@ -11,11 +11,10 @@ var Campground = require("./models/campground"),
     User       = require("./models/user"),
     Comment    = require("./models/comment");
 
-console.log(process.env.DATABASE_URL);
 
-mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true});
-//mlab-url: "mongodb://qq:qq123456@ds227352.mlab.com:27352/qqyelpcamp"
-//local-url: "mongodb://localhost:27017/yelp_camp";
+var dburl = process.env.DATABASE_URL || "mongodb://localhost:27017/yelp_camp";
+mongoose.connect(dburl, {useNewUrlParser: true});
+
 app.use(flash());
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
