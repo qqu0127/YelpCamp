@@ -12,8 +12,9 @@ var Campground = require("./models/campground"),
     Comment    = require("./models/comment");
 
 
-    
-mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});
+mongoose.connect("mongodb://qq:qq123456@ds227352.mlab.com:27352/qqyelpcamp");
+
+//mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});
 app.use(flash());
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
